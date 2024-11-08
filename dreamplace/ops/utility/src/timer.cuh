@@ -17,8 +17,11 @@ struct CUDATimer {
 
   __device__ static inline long long int getGlobaltime(void) {
     long long int ret;
-
+#if defined(__NVCC__)
     asm volatile("mov.u64 %0, %%globaltimer;" : "=l"(ret));
+#elif defined(__HIP__)
+    ret = clock64();
+#endif
 
     return ret;
   }
