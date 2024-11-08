@@ -15,7 +15,7 @@ import dreamplace.ops.weighted_average_wirelength.weighted_average_wirelength_cp
 import dreamplace.ops.weighted_average_wirelength.weighted_average_wirelength_cpp_atomic as weighted_average_wirelength_cpp_atomic
 import dreamplace.ops.weighted_average_wirelength.weighted_average_wirelength_cpp_merged as weighted_average_wirelength_cpp_merged
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.weighted_average_wirelength.weighted_average_wirelength_cuda as weighted_average_wirelength_cuda
     import dreamplace.ops.weighted_average_wirelength.weighted_average_wirelength_cuda_atomic as weighted_average_wirelength_cuda_atomic
     import dreamplace.ops.weighted_average_wirelength.weighted_average_wirelength_cuda_merged as weighted_average_wirelength_cuda_merged

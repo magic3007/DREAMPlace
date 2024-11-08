@@ -30,8 +30,8 @@ def place(params):
     @param params parameters
     """
 
-    assert (not params.gpu) or configure.compile_configurations["CUDA_FOUND"] == 'TRUE', \
-            "CANNOT enable GPU without CUDA compiled"
+    assert (not params.gpu) or (configure.compile_configurations["TORCH_ENABLE_CUDA"] == 'TRUE'), \
+            "CANNOT enable GPU without CUDA or HIP compiled"
 
     np.random.seed(params.random_seed)
     # read database

@@ -6,7 +6,7 @@ import pdb
 
 import dreamplace.ops.pin_utilization.pin_utilization_cpp as pin_utilization_cpp
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.pin_utilization.pin_utilization_cuda as pin_utilization_cuda
 
 

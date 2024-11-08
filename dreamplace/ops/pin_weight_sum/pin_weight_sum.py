@@ -6,15 +6,15 @@ import pdb
 
 import dreamplace.ops.pin_weight_sum.pws_cpp as pws_cpp
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.pin_weight_sum.pws_cuda as pws_cuda
 
 class PinWeightSumFunction(Function):
     """accumulate pin weights of a node.
     @param net_weights weight of nets
-    @param flat_nodepin flat nodepin map, length of #pins 
+    @param flat_nodepin flat nodepin map, length of #pins
     @param nodepin_start starting index in nodepin map for each net, length of #nodes+1,
-            the last entry is #pins  
+            the last entry is #pins
     @param pin2net_map pin2net map, second set of options
     @param num_nodes the total number of nodes including fillers
     """
@@ -28,10 +28,10 @@ class PinWeightSumFunction(Function):
         return output
 
 class PinWeightSum(nn.Module):
-    """ 
-    @brief Accumulate pin weights of a node. 
+    """
+    @brief Accumulate pin weights of a node.
     Support one algorithm: node-by-node (TODO: atomic)
-    Different parameters are required for different algorithms. 
+    Different parameters are required for different algorithms.
     """
     def __init__(self,
                  flat_nodepin=None,
@@ -40,11 +40,11 @@ class PinWeightSum(nn.Module):
                  num_nodes=None,
                  algorithm='node-by-node'):
         """
-        @brief initialization 
-        @param flat_nodepin flat nodepin map, length of #pins 
+        @brief initialization
+        @param flat_nodepin flat nodepin map, length of #pins
         @param nodepin_start starting index in nodepin map for each net, length of #nodes+1,
-                the last entry is #pins  
-        @param pin2net_map pin2net map, second set of options 
+                the last entry is #pins
+        @param pin2net_map pin2net map, second set of options
         @param algorithm must be node-by-node
         """
         super(PinWeightSum, self).__init__()
@@ -60,6 +60,6 @@ class PinWeightSum(nn.Module):
     def forward(self, net_weights):
         if self.algorithm == 'node-by-node':
             return PinWeightSumFunction.apply(
-                net_weights, 
+                net_weights,
                 self.flat_nodepin, self.nodepin_start,
                 self.pin2net_map, self.num_nodes)

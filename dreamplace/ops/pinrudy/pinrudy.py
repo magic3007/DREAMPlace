@@ -13,7 +13,7 @@ import pdb
 
 import dreamplace.ops.pinrudy.pinrudy_cpp as pinrudy_cpp
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.pinrudy.pinrudy_cuda as pinrudy_cuda
 
 
@@ -30,7 +30,7 @@ class PinRudy(nn.Module):
                  num_bins_y,
                  unit_horizontal_capacity,
                  unit_vertical_capacity,
-                 deterministic_flag, 
+                 deterministic_flag,
                  initial_horizontal_utilization_map=None,
                  initial_vertical_utilization_map=None):
         super(PinRudy, self).__init__()
@@ -69,7 +69,7 @@ class PinRudy(nn.Module):
             func = pinrudy_cpp.forward
         func(pin_pos, self.netpin_start, self.flat_netpin, self.net_weights,
              self.bin_size_x, self.bin_size_y, self.xl, self.yl, self.xh,
-             self.yh, self.num_bins_x, self.num_bins_y, self.deterministic_flag, 
+             self.yh, self.num_bins_x, self.num_bins_y, self.deterministic_flag,
              horizontal_utilization_map, vertical_utilization_map)
 
         if self.initial_horizontal_utilization_map is not None:

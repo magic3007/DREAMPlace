@@ -14,7 +14,7 @@ from dreamplace.ops.dct.discrete_spectral_transform import get_exact_expk as pre
 
 import dreamplace.ops.dct.dct2_fft2_cpp as dct2_fft2_cpp
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE": 
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.dct.dct2_fft2_cuda as dct2_fft2_cuda
 
 

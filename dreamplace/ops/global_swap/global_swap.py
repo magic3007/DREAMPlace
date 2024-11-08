@@ -13,7 +13,7 @@ from torch.autograd import Function
 import dreamplace.ops.global_swap.global_swap_cpp as global_swap_cpp
 import dreamplace.ops.global_swap.global_swap_concurrent_cpp as global_swap_concurrent_cpp
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.global_swap.global_swap_cuda as global_swap_cuda
 
 import pdb
@@ -22,7 +22,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class GlobalSwapFunction(Function):
-    """ Detailed placement with global swap 
+    """ Detailed placement with global swap
     """
     @staticmethod
     def forward(pos, node_size_x, node_size_y, flat_region_boxes,
@@ -115,12 +115,12 @@ class GlobalSwap(object):
         self.algorithm = algorithm
 
     def __call__(self, pos, scale_factor=1.0):
-        """ the coordinate system may need to be scaled 
+        """ the coordinate system may need to be scaled
         """
         with torch.no_grad():
-            # scale to integer system 
+            # scale to integer system
             if scale_factor != 1.0:
-                inv_scale_factor = 1.0 / scale_factor 
+                inv_scale_factor = 1.0 / scale_factor
                 logger.info("scale coodindate system by %g for refinement" % (inv_scale_factor))
                 pos.mul_(inv_scale_factor).round_()
                 self.node_size_x.mul_(inv_scale_factor).round_()
@@ -166,7 +166,7 @@ class GlobalSwap(object):
                 max_iters=self.max_iters,
                 algorithm=self.algorithm)
 
-            # scale back 
+            # scale back
             if scale_factor != 1.0:
                 logger.info("scale back by %g" % (scale_factor))
                 pos.mul_(scale_factor)
@@ -183,4 +183,4 @@ class GlobalSwap(object):
                 self.row_height = self.row_height * scale_factor
                 out.mul_(scale_factor)
 
-            return out 
+            return out

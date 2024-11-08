@@ -12,7 +12,7 @@ from torch.autograd import Function
 
 import dreamplace.ops.pin_pos.pin_pos_cpp as pin_pos_cpp
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.pin_pos.pin_pos_cuda as pin_pos_cuda
     import dreamplace.ops.pin_pos.pin_pos_cuda_segment as pin_pos_cuda_segment
 
@@ -103,7 +103,7 @@ class PinPosSegmentFunction(Function):
 class PinPos(nn.Module):
     """
     @brief Given cell locations, compute pin locations.
-    Different from torch.index_add which computes x[index[i]] += t[i], 
+    Different from torch.index_add which computes x[index[i]] += t[i],
     the forward function compute x[i] += t[index[i]]
     """
     def __init__(self,
@@ -115,8 +115,8 @@ class PinPos(nn.Module):
                  num_physical_nodes,
                  algorithm='segment'):
         """
-        @brief initialization 
-        @param pin_offset pin offset in x or y direction, only computes one direction 
+        @brief initialization
+        @param pin_offset pin offset in x or y direction, only computes one direction
         @param algorithm segment|node-by-node
         """
         super(PinPos, self).__init__()
@@ -130,8 +130,8 @@ class PinPos(nn.Module):
 
     def forward(self, pos):
         """
-        @brief API 
-        @param pos cell locations. The array consists of x locations of movable cells, fixed cells, and filler cells, then y locations of them 
+        @brief API
+        @param pos cell locations. The array consists of x locations of movable cells, fixed cells, and filler cells, then y locations of them
         """
         assert pos.numel() % 2 == 0
         num_nodes = pos.numel() // 2

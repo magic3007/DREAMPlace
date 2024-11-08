@@ -13,19 +13,19 @@ import pdb
 import dreamplace.ops.hpwl.hpwl_cpp as hpwl_cpp
 import dreamplace.ops.hpwl.hpwl_cpp_atomic as hpwl_cpp_atomic
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.hpwl.hpwl_cuda as hpwl_cuda
     import dreamplace.ops.hpwl.hpwl_cuda_atomic as hpwl_cuda_atomic
 
 
 class HPWLFunction(Function):
     """compute half-perimeter wirelength.
-    @param pos pin location (x array, y array), not cell location 
-    @param flat_netpin flat netpin map, length of #pins 
-    @param netpin_start starting index in netpin map for each net, length of #nets+1, the last entry is #pins  
-    @param net_weights weight of nets 
-    @param net_mask a boolean mask containing whether a net should be computed 
-    @param pin2net_map pin2net map, second set of options 
+    @param pos pin location (x array, y array), not cell location
+    @param flat_netpin flat netpin map, length of #pins
+    @param netpin_start starting index in netpin map for each net, length of #nets+1, the last entry is #pins
+    @param net_weights weight of nets
+    @param net_mask a boolean mask containing whether a net should be computed
+    @param pin2net_map pin2net map, second set of options
     """
     @staticmethod
     def forward(ctx, pos, flat_netpin, netpin_start, net_weights, net_mask):
@@ -41,10 +41,10 @@ class HPWLFunction(Function):
 
 class HPWLAtomicFunction(Function):
     """compute half-perimeter wirelength using atomic max/min.
-    @param pos pin location (x array, y array), not cell location 
-    @param pin2net_map pin2net map, second set of options 
-    @param net_weights weight of nets 
-    @param net_mask a boolean mask containing whether a net should be computed 
+    @param pos pin location (x array, y array), not cell location
+    @param pin2net_map pin2net map, second set of options
+    @param net_weights weight of nets
+    @param net_mask a boolean mask containing whether a net should be computed
     """
     @staticmethod
     def forward(ctx, pos, pin2net_map, net_weights, net_mask):
@@ -59,10 +59,10 @@ class HPWLAtomicFunction(Function):
 
 
 class HPWL(nn.Module):
-    """ 
-    @brief Compute half-perimeter wirelength. 
-    Support two algoriths: net-by-net and atomic. 
-    Different parameters are required for different algorithms. 
+    """
+    @brief Compute half-perimeter wirelength.
+    Support two algoriths: net-by-net and atomic.
+    Different parameters are required for different algorithms.
     """
     def __init__(self,
                  flat_netpin=None,
@@ -72,12 +72,12 @@ class HPWL(nn.Module):
                  net_mask=None,
                  algorithm='atomic'):
         """
-        @brief initialization 
-        @param flat_netpin flat netpin map, length of #pins 
-        @param netpin_start starting index in netpin map for each net, length of #nets+1, the last entry is #pins  
-        @param pin2net_map pin2net map 
-        @param net_weights weight of nets 
-        @param net_mask whether to compute wirelength, 1 means to compute, 0 means to ignore; users should guarantee invalid nets are filtered out  
+        @brief initialization
+        @param flat_netpin flat netpin map, length of #pins
+        @param netpin_start starting index in netpin map for each net, length of #nets+1, the last entry is #pins
+        @param pin2net_map pin2net map
+        @param net_weights weight of nets
+        @param net_mask whether to compute wirelength, 1 means to compute, 0 means to ignore; users should guarantee invalid nets are filtered out
         @param algorithm must be net-by-net | atomic
         """
         super(HPWL, self).__init__()

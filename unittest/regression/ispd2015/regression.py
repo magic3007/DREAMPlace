@@ -75,7 +75,7 @@ tolerance = {
 
 # gpu flag
 devices = ["cpu"]
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE" and torch.cuda.device_count():
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE" and torch.cuda.device_count():
     devices.append("gpu")
 # deterministic flags
 deterministics = ["deterministic", "indeterministic"]

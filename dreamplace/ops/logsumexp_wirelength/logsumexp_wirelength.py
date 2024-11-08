@@ -13,7 +13,7 @@ import logging
 
 import dreamplace.ops.logsumexp_wirelength.logsumexp_wirelength_cpp_merged as logsumexp_wirelength_cpp_merged
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.logsumexp_wirelength.logsumexp_wirelength_cuda_merged as logsumexp_wirelength_cuda_merged
     import dreamplace.ops.logsumexp_wirelength.logsumexp_wirelength_cuda_atomic as logsumexp_wirelength_cuda_atomic
 import pdb
@@ -23,11 +23,11 @@ logger = logging.getLogger(__name__)
 
 class LogSumExpWirelengthAtomicFunction(Function):
     """compute weighted average wirelength.
-    @param pos pin location (x array, y array), not cell location 
-    @param pin2net_map pin2net map 
-    @param net_weights weight of nets 
-    @param net_mask whether to compute wirelength 
-    @param gamma the smaller, the closer to HPWL 
+    @param pos pin location (x array, y array), not cell location
+    @param pin2net_map pin2net map
+    @param net_weights weight of nets
+    @param net_mask whether to compute wirelength
+    @param gamma the smaller, the closer to HPWL
     """
     @staticmethod
     def forward(ctx, pos, pin2net_map, net_weights, net_mask, gamma):
@@ -122,17 +122,17 @@ class LogSumExpWirelengthMergedFunction(Function):
 
 
 class LogSumExpWirelength(nn.Module):
-    """ Compute log-sum-exp wirelength. 
-    CPU only supports net-by-net algorithm. 
-    GPU supports two algorithms: atomic, sparse. 
-    Different parameters are required for different algorithms. 
+    """ Compute log-sum-exp wirelength.
+    CPU only supports net-by-net algorithm.
+    GPU supports two algorithms: atomic, sparse.
+    Different parameters are required for different algorithms.
 
-    @param flat_netpin flat netpin map, length of #pins 
-    @param netpin_start starting index in netpin map for each net, length of #nets+1, the last entry is #pins  
-    @param pin2net_map pin2net map 
-    @param net_weights weight of nets 
-    @param net_mask whether to compute wirelength, 1 means to compute, 0 means to ignore  
-    @param gamma the smaller, the closer to HPWL 
+    @param flat_netpin flat netpin map, length of #pins
+    @param netpin_start starting index in netpin map for each net, length of #nets+1, the last entry is #pins
+    @param pin2net_map pin2net map
+    @param net_weights weight of nets
+    @param net_mask whether to compute wirelength, 1 means to compute, 0 means to ignore
+    @param gamma the smaller, the closer to HPWL
     @param algorithm must be merged | atomic
     """
     def __init__(self,

@@ -31,7 +31,7 @@ from dreamplace.ops.electric_potential.electric_overflow import ElectricOverflow
 
 import dreamplace.ops.electric_potential.electric_potential_cpp as electric_potential_cpp
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.electric_potential.electric_potential_cuda as electric_potential_cuda
 
 import pdb

@@ -12,18 +12,18 @@ import pdb
 
 import dreamplace.ops.dct.dct_lee_cpp as dct_cpp
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE": 
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.dct.dct_lee_cuda as dct_cuda
 
 def dct(x, expk, buf, out):
-    """compute discrete cosine transformation, DCT II 
+    """compute discrete cosine transformation, DCT II
     yk = \sum_{n=0}^{N-1} x_n cos(pi/N*n*(k+1/2))
     """
     if x.is_cuda:
         dct_cuda.dct(x.view([-1, x.size(-1)]), expk, buf, out)
     else:
         dct_cpp.dct(x.view([-1, x.size(-1)]), expk, buf, out, torch.get_num_threads())
-    return out.view(x.size())  
+    return out.view(x.size())
 
 class DCTFunction(Function):
     @staticmethod
@@ -36,10 +36,10 @@ class DCT(nn.Module):
         self.expk = expk
         self.buf = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk is None or self.expk.size(-1) != x.size(-1):
             self.expk = torch.empty(x.size(-1), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_dct_cos(x.size(-1), self.expk)
             else:
                 dct_cpp.precompute_dct_cos(x.size(-1), self.expk)
@@ -57,7 +57,7 @@ def idct(x, expk, buf, out):
         dct_cuda.idct(x.view([-1, x.size(-1)]), expk, buf, out)
     else:
         dct_cpp.idct(x.view([-1, x.size(-1)]), expk, buf, out, torch.get_num_threads())
-    return out.view(x.size())  
+    return out.view(x.size())
 
 class IDCTFunction(Function):
     @staticmethod
@@ -70,10 +70,10 @@ class IDCT(nn.Module):
         self.expk = expk
         self.buf = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk is None or self.expk.size(-1) != x.size(-1):
             self.expk = torch.empty(x.size(-1), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-1), self.expk)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-1), self.expk)
@@ -103,16 +103,16 @@ class DCT2(nn.Module):
         self.expk1 = expk1
         self.buf = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk0 is None or self.expk0.size(-1) != x.size(-2):
             self.expk0 = torch.empty(x.size(-2), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_dct_cos(x.size(-2), self.expk0)
             else:
                 dct_cpp.precompute_dct_cos(x.size(-2), self.expk0)
         if self.expk1 is None or self.expk1.size(-1) != x.size(-1):
             self.expk1 = torch.empty(x.size(-1), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_dct_cos(x.size(-1), self.expk1)
             else:
                 dct_cpp.precompute_dct_cos(x.size(-1), self.expk1)
@@ -142,16 +142,16 @@ class IDCT2(nn.Module):
         self.expk1 = expk1
         self.buf = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk0 is None or self.expk0.size(-1) != x.size(-2):
             self.expk0 = torch.empty(x.size(-2), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-2), self.expk0)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-2), self.expk0)
         if self.expk1 is None or self.expk1.size(-1) != x.size(-1):
             self.expk1 = torch.empty(x.size(-2), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-1), self.expk1)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-1), self.expk1)
@@ -168,7 +168,7 @@ def dst(x, expk, buf, out):
         dct_cuda.dst(x.view([-1, x.size(-1)]), expk, buf, out)
     else:
         dct_cpp.dst(x.view([-1, x.size(-1)]), expk, buf, out, torch.get_num_threads())
-    return out.view(x.size())  
+    return out.view(x.size())
 
 class DSTFunction(Function):
     @staticmethod
@@ -179,12 +179,12 @@ class DST(nn.Module):
     def __init__(self, expk=None):
         super(DST, self).__init__()
         self.expk = expk
-        self.buf = None 
+        self.buf = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk is None or self.expk.size(-1) != x.size(-1):
             self.expk = torch.empty(x.size(-1), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_dct_cos(x.size(-1), self.expk)
             else:
                 dct_cpp.precompute_dct_cos(x.size(-1), self.expk)
@@ -202,7 +202,7 @@ def idst(x, expk, buf, out):
         dct_cuda.idst(x.view([-1, x.size(-1)]), expk, buf, out)
     else:
         dct_cpp.idst(x.view([-1, x.size(-1)]), expk, buf, out, torch.get_num_threads())
-    return out.view(x.size())  
+    return out.view(x.size())
 
 class IDSTFunction(Function):
     @staticmethod
@@ -215,10 +215,10 @@ class IDST(nn.Module):
         self.expk = expk
         self.buf = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk is None or self.expk.size(-1) != x.size(-1):
             self.expk = torch.empty(x.size(-1), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-1), self.expk)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-1), self.expk)
@@ -239,7 +239,7 @@ def idxct(x, expk, buf, out):
     #output = IDCTFunction.forward(ctx, x, expk)
     #output.add_(x[..., 0].unsqueeze(-1)).mul_(0.5)
     ##output.mul_(0.5).add_(x[..., 0].unsqueeze(-1).mul(0.5))
-    return out.view(x.size()) 
+    return out.view(x.size())
 
 class IDXCTFunction(Function):
     @staticmethod
@@ -252,10 +252,10 @@ class IDXCT(nn.Module):
         self.expk = expk
         self.buf = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk is None or self.expk.size(-1) != x.size(-1):
             self.expk = torch.empty(x.size(-1), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-1), self.expk)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-1), self.expk)
@@ -273,7 +273,7 @@ def idxst(x, expk, buf, out):
         dct_cuda.idxst(x.view([-1, x.size(-1)]), expk, buf, out)
     else:
         dct_cpp.idxst(x.view([-1, x.size(-1)]), expk, buf, out, torch.get_num_threads())
-    return out.view(x.size())  
+    return out.view(x.size())
 
 class IDXSTFunction(Function):
     @staticmethod
@@ -286,10 +286,10 @@ class IDXST(nn.Module):
         self.expk = expk
         self.buf = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk is None or self.expk.size(-1) != x.size(-1):
             self.expk = torch.empty(x.size(-1), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-1), self.expk)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-1), self.expk)
@@ -306,7 +306,7 @@ def idcct2(x, expk0, expk1, buf0, buf1, out):
         dct_cuda.idcct2(x.view([-1, x.size(-1)]), expk0, expk1, buf0, buf1, out)
     else:
         dct_cpp.idcct2(x.view([-1, x.size(-1)]), expk0, expk1, buf0, buf1, out, torch.get_num_threads())
-    return out.view(x.size())  
+    return out.view(x.size())
 
 class IDCCT2Function(Function):
     @staticmethod
@@ -321,16 +321,16 @@ class IDCCT2(nn.Module):
         self.buf0 = None
         self.buf1 = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk0 is None or self.expk0.size(-1) != x.size(-2):
             self.expk0 = torch.empty(x.size(-2), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-2), self.expk0)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-2), self.expk0)
         if self.expk1 is None or self.expk1.size(-1) != x.size(-1):
             self.expk1 = torch.empty(x.size(-2), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-1), self.expk1)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-1), self.expk1)
@@ -348,7 +348,7 @@ def idcst2(x, expk0, expk1, buf0, buf1, out):
         dct_cuda.idcst2(x.view([-1, x.size(-1)]), expk0, expk1, buf0, buf1, out)
     else:
         dct_cpp.idcst2(x.view([-1, x.size(-1)]), expk0, expk1, buf0, buf1, out, torch.get_num_threads())
-    return out.view(x.size())  
+    return out.view(x.size())
 
 class IDCST2Function(Function):
     @staticmethod
@@ -363,16 +363,16 @@ class IDCST2(nn.Module):
         self.buf0 = None
         self.buf1 = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk0 is None or self.expk0.size(-1) != x.size(-2):
             self.expk0 = torch.empty(x.size(-2), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-2), self.expk0)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-2), self.expk0)
         if self.expk1 is None or self.expk1.size(-1) != x.size(-1):
             self.expk1 = torch.empty(x.size(-2), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-1), self.expk1)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-1), self.expk1)
@@ -390,7 +390,7 @@ def idsct2(x, expk0, expk1, buf0, buf1, out):
         dct_cuda.idsct2(x.view([-1, x.size(-1)]), expk0, expk1, buf0, buf1, out)
     else:
         dct_cpp.idsct2(x.view([-1, x.size(-1)]), expk0, expk1, buf0, buf1, out, torch.get_num_threads())
-    return out.view(x.size())  
+    return out.view(x.size())
 
 class IDSCT2Function(Function):
     @staticmethod
@@ -405,16 +405,16 @@ class IDSCT2(nn.Module):
         self.buf0 = None
         self.buf1 = None
         self.out = None
-    def forward(self, x): 
+    def forward(self, x):
         if self.expk0 is None or self.expk0.size(-1) != x.size(-2):
             self.expk0 = torch.empty(x.size(-2), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-2), self.expk0)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-2), self.expk0)
         if self.expk1 is None or self.expk1.size(-1) != x.size(-1):
             self.expk1 = torch.empty(x.size(-2), dtype=x.dtype, device=x.device)
-            if x.is_cuda: 
+            if x.is_cuda:
                 dct_cuda.precompute_idct_cos(x.size(-1), self.expk1)
             else:
                 dct_cpp.precompute_idct_cos(x.size(-1), self.expk1)

@@ -14,7 +14,7 @@ from torch.nn import functional as F
 
 import dreamplace.ops.density_potential.density_potential_cpp as density_potential_cpp
 import dreamplace.configure as configure
-if configure.compile_configurations["CUDA_FOUND"] == "TRUE":
+if configure.compile_configurations["TORCH_ENABLE_CUDA"] == "TRUE":
     import dreamplace.ops.density_potential.density_potential_cuda as density_potential_cuda
 
 import pdb
@@ -56,7 +56,7 @@ class DensityPotentialFunction(Function):
         num_movable_nodes,
         num_filler_nodes,
         padding,
-        padding_mask,  # same dimensions as density map, with padding regions to be 1 
+        padding_mask,  # same dimensions as density map, with padding regions to be 1
         num_bins_x,
         num_bins_y,
         num_impacted_bins_x,
@@ -137,37 +137,37 @@ class DensityPotentialFunction(Function):
 
 class DensityPotential(nn.Module):
     """
-    @brief Compute density potential according to NTUPlace3 
+    @brief Compute density potential according to NTUPlace3
     """
     def __init__(self, node_size_x, node_size_y, ax, bx, cx, ay, by, cy,
                  bin_center_x, bin_center_y, target_density, xl, yl, xh, yh,
                  bin_size_x, bin_size_y, num_movable_nodes, num_terminals,
                  num_filler_nodes, padding, sigma, delta):
         """
-        @brief initialization 
-        @param node_size_x cell width array consisting of movable cells, fixed cells, and filler cells in order  
-        @param node_size_y cell height array consisting of movable cells, fixed cells, and filler cells in order   
-        @param ax 
-        @param bx 
-        @param cx 
-        @param ay 
-        @param by 
-        @param cy see the a, b, c defined in NTUPlace3 
-        @param bin_center_x bin center x locations 
-        @param bin_center_y bin center y locations 
-        @param target_density target density 
-        @param xl left boundary 
-        @param yl bottom boundary 
-        @param xh right boundary 
-        @param yh top boundary 
-        @param bin_size_x bin width 
-        @param bin_size_y bin height 
-        @param num_movable_nodes number of movable cells 
-        @param num_terminals number of fixed cells 
-        @param num_filler_nodes number of filler cells 
-        @param padding bin padding to boundary of placement region 
-        @param sigma parameter for density map of fixed cells according to NTUPlace3 
-        @param delta parameter for density map of fixed cells according to NTUPlace3  
+        @brief initialization
+        @param node_size_x cell width array consisting of movable cells, fixed cells, and filler cells in order
+        @param node_size_y cell height array consisting of movable cells, fixed cells, and filler cells in order
+        @param ax
+        @param bx
+        @param cx
+        @param ay
+        @param by
+        @param cy see the a, b, c defined in NTUPlace3
+        @param bin_center_x bin center x locations
+        @param bin_center_y bin center y locations
+        @param target_density target density
+        @param xl left boundary
+        @param yl bottom boundary
+        @param xh right boundary
+        @param yh top boundary
+        @param bin_size_x bin width
+        @param bin_size_y bin height
+        @param num_movable_nodes number of movable cells
+        @param num_terminals number of fixed cells
+        @param num_filler_nodes number of filler cells
+        @param padding bin padding to boundary of placement region
+        @param sigma parameter for density map of fixed cells according to NTUPlace3
+        @param delta parameter for density map of fixed cells according to NTUPlace3
         """
         super(DensityPotential, self).__init__()
         self.node_size_x = node_size_x
@@ -291,7 +291,7 @@ class DensityPotential(nn.Module):
 
 def gaussian_kernel(sigma, truncate=4.0):
     """
-    Return Gaussian that truncates at the given number of standard deviations. 
+    Return Gaussian that truncates at the given number of standard deviations.
     """
 
     sigma = float(sigma)
@@ -308,7 +308,7 @@ def gaussian_kernel(sigma, truncate=4.0):
 
 def plot(plot_count, density_map, padding, name):
     """
-    density map contour and heat map 
+    density map contour and heat map
     """
     density_map = density_map[padding:-1 - padding, padding:-1 - padding]
     print("max density = %g" % (np.amax(density_map)))
