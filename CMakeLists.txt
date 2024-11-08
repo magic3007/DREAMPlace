@@ -152,8 +152,10 @@ if (HIP_FOUND)
   # message(STATUS "HIP_ARCH_FLAGS: ${HIP_ARCH_FLAGS}")
   # for hip_add_library
   list(APPEND HIP_HIPCC_FLAGS ${HIP_ARCH_FLAGS} -fPIC)
-  # dirty fix: add -std=c++14 for hipcc compiler
+  # dirty fix: add -std=c++14 for HIP
   list(APPEND HIP_HIPCC_FLAGS -std=c++14)
+  # dirty fix: set --gpu-max-threads-per-block to 512 for HIP
+  list(APPEND HIP_HIPCC_FLAGS --gpu-max-threads-per-block=512)
 endif(HIP_FOUND)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dreamplace/configure.py.in ${CMAKE_CURRENT_BINARY_DIR}/dreamplace/configure.py)
