@@ -72,8 +72,17 @@ def place(params):
         os.system("mkdir -p %s" % (path))
     gp_out_file = os.path.join(
         path,
-        "%s.gp.%s" % (params.design_name(), params.solution_file_suffix()))
+        "%s.%s" % (params.design_name(), params.solution_file_suffix()))
     placedb.write(params, gp_out_file)
+    
+    if True:
+        input_def_path = params.aux_input.replace(".aux", ".def")
+        if os.path.exists(input_def_path):
+            output_def_path = gp_out_file.replace(".pl", ".def")
+            logging.info(f"convert pl to def: {gp_out_file} -> {output_def_path}")
+            os.system(f"python {os.path.join(root_dir, 'dreamplace/pl_2_def.py')} {gp_out_file} {input_def_path}")
+        else:
+            logging.warning(f"input def file {input_def_path} not found")
 
     # call external detailed placement
     # TODO: support more external placers, currently only support
