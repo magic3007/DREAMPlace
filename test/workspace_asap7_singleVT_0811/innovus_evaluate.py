@@ -44,9 +44,6 @@ def main():
         puts "Reading DEF file: {def_file_path}"
         defIn {def_file_path}
 
-        puts "Running refinePlace..."
-        refinePlace
-
         puts "Running earlyGlobalRoute..."
         earlyGlobalRoute
         
@@ -115,9 +112,6 @@ def main():
         return_code = 1
     finally:
         os.chdir(original_cwd)
-        if os.path.exists(tcl_script_path):
-            os.remove(tcl_script_path)
-            print(f"Removed temporary Tcl script: {tcl_script_path}")
     
     return return_code
 
