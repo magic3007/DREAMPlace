@@ -50,10 +50,6 @@ def main():
         puts "Reporting congestion..."
         reportCongestion -hotspot -overflow
         
-        puts "Calculating wire length..."
-        set wire_length [expr [join [dbGet top.nets.wires.length] +]]
-        puts "Innovus WL: $wire_length"
-        
         puts "Running pre-CTS timing analysis..."
         timeDesign -preCTS
 
